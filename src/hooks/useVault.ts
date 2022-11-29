@@ -103,7 +103,7 @@ export const useVault = () => {
     if (isMobile) {
       Device.isSystemPasscodeSet().then(setCanUseSystemPin);
       Device.isBiometricsEnabled().then(setCanUseBiometrics);
-      
+      Device.setHideScreenOnBackground(true);
     }
   }, []);
 
