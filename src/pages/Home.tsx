@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useVault, LockType } from '../hooks/useVault';
 
 const Home: React.FC = () => {
-    const { session, vaultIsLocked, storeSession, restoreSession, lockVault, unlockVault, canUseBiometrics, canUseSystemPin, setLockType } = useVault();
+    const { session, vaultIsLocked, storeSession, restoreSession, lockVault, unlockVault, canUseBiometrics, canUseSystemPin, setLockType, clearVault } = useVault();
     const [data, setData] = useState<string>('');
   
     return (
@@ -30,13 +30,22 @@ const Home: React.FC = () => {
                 <button onClick={() => unlockVault()}>Unlock Vault</button>
             </div>
 
+            <div style={{ flex: 'auto' }}>
+                <button onClick={() => clearVault()}>Clear Vault</button>
+            </div>
+            
             <div>
                 <input type="radio" id="nolocking" name="lockType" value="NoLocking" onChange={(e) => {
                     if(e.target.checked) setLockType('NoLocking')
                 }}/>
                 <label htmlFor="nolocking">Do Not Lock</label>
             </div>
-
+            <div>
+                <input type="radio" id="both" name="lockType" value="Both" onChange={(e) => {
+                    if(e.target.checked) setLockType('Both')
+                }}/>
+                <label htmlFor="nolocking">Both</label>
+            </div>
             <div>
                 <input type="radio" id="biometrics" name="lockType" value="Biometrics" disabled={!canUseBiometrics} onChange={(e) => {
                     if(e.target.checked) setLockType('Biometrics')

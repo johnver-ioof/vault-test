@@ -31,7 +31,7 @@ const config: IdentityVaultConfig = {
 };
 const key = 'sessionData';
 
-export type LockType = 'NoLocking' | 'Biometrics' | 'SystemPasscode' | undefined;
+export type LockType = 'NoLocking' | 'Biometrics' | 'SystemPasscode' | 'Both' | undefined;
 
 const getConfigUpdates = (lockType: LockType) => {
     switch (lockType) {
@@ -41,6 +41,12 @@ const getConfigUpdates = (lockType: LockType) => {
           deviceSecurityType: DeviceSecurityType.Biometrics,
           unlockVaultOnLoad: true
         };
+        case 'Both':
+          return {
+            type: VaultType.DeviceSecurity,
+            deviceSecurityType: DeviceSecurityType.Both,
+            unlockVaultOnLoad: true
+          };
       case 'SystemPasscode':
         return {
           type: VaultType.DeviceSecurity,
@@ -91,8 +97,8 @@ export const useVault = () => {
 
   useEffect(() => {
     if (lockType) {
-      const { type, deviceSecurityType } = getConfigUpdates(lockType);
-      const newConfig = { ...vault.config, type, deviceSecurityType }
+      const { type, deviceSecurityType, unlockVaultOnLoad } = getConfigUpdates(lockType);
+      const newConfig = { ...vault.config, type, deviceSecurityType, unlockVaultOnLoad }
       vault.updateConfig(newConfig);
       console.log('newConfig', newConfig)
       unsecuredVault.setValue('existingConfig', newConfig).catch((err) => console.log('err',err))
@@ -125,6 +131,15 @@ export const useVault = () => {
     await vault.unlock();
   };
 
+    
+  const clearVault = async (): Promise<void> => {
+    try {
+      await vault.clear();
+    } catch (e) {
+      console.log('clearVault', e)
+    }
+  };
+
   return { session, vaultIsLocked, storeSession, restoreSession, lockVault,
-    unlockVault, canUseBiometrics, setLockType, canUseSystemPin};
+    unlockVault, canUseBiometrics, setLockType, canUseSystemPin, clearVault};
 };
